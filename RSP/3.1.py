@@ -1,0 +1,53 @@
+import threading
+import time
+
+ITERATIONS = 100_000
+
+counter = 0
+
+def increment_counter():
+    global counter
+    for _ in range(ITERATIONS):
+        temp = counter
+        temp += 1
+        counter = temp
+
+def decrement_counter():
+    global counter
+    for _ in range(ITERATIONS):
+        temp = counter
+        temp -= 1
+        counter = temp
+
+def main():
+
+    p = int(input("Введите кол-во инкрементирующих потоков: "))
+    m = int(input("Введите кол-во декрементирующих потоков: "))
+
+    global counter
+    counter = 0
+
+    threads = []
+    start_time = time.time()
+
+    for _ in range(p):
+        t = threading.Thread(target=increment_counter)
+        threads.append(t)
+
+    for _ in range(m):
+        t = threading.Thread(target=decrement_counter)
+        threads.append(t)
+
+    for t in threads:
+        t.start()
+
+    for t in threads:
+        t.join()
+
+    end_time = time.time()
+
+    print(f"Общее время выполнения: {end_time - start_time:.4f} сек.")
+    print(f"Финальное значение счётчика: {counter}")
+
+if __name__ == "__main__":
+    main()
